@@ -23,7 +23,7 @@
 # 
 # Please make sure if you are running this notebook in the workspace that you have chosen GPU rather than CPU mode.
 
-# In[2]:
+# In[1]:
 
 
 # Imports here
@@ -52,7 +52,7 @@ from PIL import Image
 # The pre-trained networks you'll use were trained on the ImageNet dataset where each color channel was normalized separately. For all three sets you'll need to normalize the means and standard deviations of the images to what the network expects. For the means, it's `[0.485, 0.456, 0.406]` and for the standard deviations `[0.229, 0.224, 0.225]`, calculated from the ImageNet images.  These values will shift each color channel to be centered at 0 and range from -1 to 1.
 #  
 
-# In[3]:
+# In[2]:
 
 
 data_dir = 'flowers'
@@ -61,7 +61,7 @@ valid_dir = data_dir + '/valid'
 test_dir = data_dir + '/test'
 
 
-# In[4]:
+# In[3]:
 
 
 #Setting out the batch size
@@ -104,7 +104,7 @@ print("Valid" + str(len(dataloaders[2])))
 # 
 # You'll also need to load in a mapping from category label to category name. You can find this in the file `cat_to_name.json`. It's a JSON object which you can read in with the [`json` module](https://docs.python.org/2/library/json.html). This will give you a dictionary mapping the integer encoded categories to the actual names of the flowers.
 
-# In[5]:
+# In[4]:
 
 
 with open('cat_to_name.json', 'r') as f:
@@ -131,7 +131,7 @@ images.size()
 # 
 # One last important tip if you're using the workspace to run your code: To avoid having your workspace disconnect during the long-running tasks in this notebook, please read in the earlier page in this lesson called Intro to GPU Workspaces about Keeping Your Session Active. You'll want to include code from the workspace_utils.py module.
 
-# In[21]:
+# In[8]:
 
 
 model = models.densenet121(pretrained=True)
@@ -149,7 +149,7 @@ classifier = nn.Sequential(OrderedDict([('input',  nn.Linear(1024, 550)),
 model.classifier = classifier
 
 
-# In[22]:
+# In[9]:
 
 
 def train_model(criterion, optimizer, epochs=10, cuda=False):
@@ -231,7 +231,7 @@ train_model(criterion=criterion, optimizer=optimizer, epochs=epochs, cuda=cuda)
 # 
 # It's good practice to test your trained network on test data, images the network has never seen either in training or validation. This will give you a good estimate for the model's performance on completely new images. Run the test images through the network and measure the accuracy, the same way you did validation. You should be able to reach around 70% accuracy on the test set if the model has been trained well.
 
-# In[13]:
+# In[8]:
 
 
 def validate_model(cuda=False):
@@ -260,7 +260,7 @@ def validate_model(cuda=False):
     print("Testing Accuracy: {:.3f}".format(accuracy/len(dataloaders[2])))
 
 
-# In[14]:
+# In[9]:
 
 
 cuda = torch.cuda.is_available
@@ -275,7 +275,7 @@ validate_model(cuda=cuda)
 # 
 # Remember that you'll want to completely rebuild the model later so you can use it for inference. Make sure to include any information you need in the checkpoint. If you want to load the model and keep training, you'll want to save the number of epochs as well as the optimizer state, `optimizer.state_dict`. You'll likely want to use this trained model in the next part of the project, so best to save it now.
 
-# In[25]:
+# In[12]:
 
 
 checkpoint = {'input_size': 1024,
@@ -298,7 +298,7 @@ torch.save(checkpoint, 'checkpoint.pth')
 # 
 # At this point it's good to write a function that can load a checkpoint and rebuild the model. That way you can come back to this project and keep working on it without having to retrain the network.
 
-# In[6]:
+# In[7]:
 
 
 # TODO: Write a function that loads a checkpoint and rebuilds the model
@@ -346,7 +346,7 @@ model
 # 
 # And finally, PyTorch expects the color channel to be the first dimension but it's the third dimension in the PIL image and Numpy array. You can reorder dimensions using [`ndarray.transpose`](https://docs.scipy.org/doc/numpy-1.13.0/reference/generated/numpy.ndarray.transpose.html). The color channel needs to be first and retain the order of the other two dimensions.
 
-# In[7]:
+# In[10]:
 
 
 def process_image(image):
@@ -377,7 +377,7 @@ def process_image(image):
 
 # To check your work, the function below converts a PyTorch tensor and displays it in the notebook. If your `process_image` function works, running the output through this function should return the original image (except for the cropped out portions).
 
-# In[8]:
+# In[11]:
 
 
 def imshow(image, ax=None, title=None):
@@ -402,15 +402,15 @@ def imshow(image, ax=None, title=None):
     return ax
 
 
-# In[9]:
+# In[12]:
 
 
 
 
-with Image.open('flowers/test/53/image_03677.jpg') as image:
+with Image.open('flowers/test/15/image_06351.jpg') as image:
     plt.imshow(image)
 
-with Image.open('flowers/test/53/image_03677.jpg') as image:
+with Image.open('flowers/test/15/image_06351.jpg') as image:
     imshow(process_image(image))
 
 
@@ -430,7 +430,7 @@ with Image.open('flowers/test/53/image_03677.jpg') as image:
 # > ['70', '3', '45', '62', '55']
 # ```
 
-# In[15]:
+# In[13]:
 
 
 def predict(image_path, model, topk=5):
@@ -475,7 +475,7 @@ def predict(image_path, model, topk=5):
     return probs.numpy()[0], mapped_classes
 
 
-# In[18]:
+# In[14]:
 
 
 image_path = test_dir + '/15/image_06351.jpg'
@@ -493,7 +493,7 @@ print(classes)
 # 
 # You can convert from the class integer encoding to actual flower names with the `cat_to_name.json` file (should have been loaded earlier in the notebook). To show a PyTorch tensor as an image, use the `imshow` function defined above.
 
-# In[17]:
+# In[15]:
 
 
 # TODO: Display an image along with the top 5 classes
